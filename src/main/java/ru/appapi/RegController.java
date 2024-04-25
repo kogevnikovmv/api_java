@@ -1,11 +1,13 @@
 package ru.appapi;
 
+import models.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import services.UserService;
 
 import java.util.Objects;
 
@@ -17,6 +19,7 @@ public class RegController {
     private static final String ERROR_STATUS = "error";
     private static final int CODE_SUCCESS = 100;
     private static final int AUTH_FAILURE = 102;
+    private UserService userService = new UserService();
 
     @PostMapping("/login")
     public BaseResponse login (@RequestBody LoginRequest request) {
@@ -30,7 +33,9 @@ public class RegController {
     }
 
     @PostMapping("/register")
-    String register () {
-        return "u r loggin";
+    String register (@RequestBody LoginRequest request) {
+        User user;
+        user=userService.findUserById(1);
+        return user.getEmail();
     }
 }
