@@ -11,6 +11,8 @@ import services.UserService;
 
 import java.util.Objects;
 
+import static ru.appapi.MyApp.userService;
+
 @RestController
 @RequestMapping()
 public class RegController {
@@ -19,7 +21,7 @@ public class RegController {
     private static final String ERROR_STATUS = "error";
     private static final int CODE_SUCCESS = 100;
     private static final int AUTH_FAILURE = 102;
-    private UserService userService = new UserService();
+    //private UserService userService = new UserService();
 
     @PostMapping("/login")
     public BaseResponse login (@RequestBody LoginRequest request) {
@@ -35,7 +37,8 @@ public class RegController {
     @PostMapping("/register")
     String register (@RequestBody LoginRequest request) {
         User user;
-        user=userService.findUserById(1);
-        return user.getEmail();
+        user=userService.findUserByLogin(request.getLogin());
+        System.out.println(user+"="+user.getEmail());
+        return "{\"email\": \""+user.getEmail()+"\"}";
     }
 }

@@ -12,8 +12,15 @@ public class UserDAO {
         return HibernateSessionFactory.getSessionFactory().openSession().get(User.class, id);
     }
 
+    //не верно
     public User findByLogin(String login) {
-        return HibernateSessionFactory.getSessionFactory().openSession().get(User.class, login);
+        Session session= HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction transaction= session.beginTransaction();
+        String queryString="from Users where login= :value";
+        Query queryObject = session.createQuery(queryString);
+        queryObject.setParameter(login, value);
+
+        return ;
     }
 
     public void save(User user) {
@@ -28,6 +35,8 @@ public class UserDAO {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
         session.merge(user);
+        transaction.commit();
+        session.close();
     }
 
     public void delete(User user) {
