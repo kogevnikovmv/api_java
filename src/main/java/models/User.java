@@ -11,6 +11,12 @@ public class User {
     private String password;
     private String email;
 
+    public User(String login, String email, String password) {
+        this.login = login;
+        this.email = email;
+        this.password = password;
+    }
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,4 +54,5 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }

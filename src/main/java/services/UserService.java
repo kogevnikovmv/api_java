@@ -24,8 +24,12 @@ public class UserService {
         return userDao.findByLogin(login);
     }
 
-    public void saveUser(User user) {
-        userDao.save(user);
+    public List<User> getAll() {
+        return userDao.getAll();
+    }
+
+    public Integer saveUser(User user) {
+        return userDao.save(user);
     }
 
     public void updateUser(User user) {

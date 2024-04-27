@@ -1,5 +1,8 @@
 package ru.appapi;
 
+import models.BaseResponse;
+import models.LoginRequest;
+import models.RegisterRequest;
 import models.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -7,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import services.UserService;
 
 import java.util.Objects;
 
@@ -35,10 +37,14 @@ public class RegController {
     }
 
     @PostMapping("/register")
-    String register (@RequestBody LoginRequest request) {
-        User user;
-        user=userService.findUserByLogin(request.getLogin());
-        System.out.println(user+"="+user.getEmail());
-        return "{\"email\": \""+user.getEmail()+"\"}";
+    String register (@RequestBody RegisterRequest request) {
+        //return "{\"email\": \""+user.getEmail()+"\"}";*/
+        if (userService.saveUser(new User(
+                request.getLogin(),
+                request.getEmail(),
+                request.getPassword()
+                )
+        )==null) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something wrong");}
+        else {return "{\"message\": \"new account created\"}";}
     }
 }

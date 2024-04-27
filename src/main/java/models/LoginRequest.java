@@ -1,4 +1,4 @@
-package ru.appapi;
+package models;
 
 public class LoginRequest {
 

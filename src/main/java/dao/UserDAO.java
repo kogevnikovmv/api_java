@@ -16,19 +16,34 @@ public class UserDAO {
     public User findByLogin(String login) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
-        String queryString="from Users where login= :value";
-        Query queryObject = session.createQuery(queryString);
-        queryObject.setParameter(login, value);
-
-        return ;
+        List<User> result=session.createSelectionQuery("from User where login= :value", User.class)
+                .setParameter("value", login)
+                .getResultList();
+        transaction.commit();
+        session.close();
+        return result.get(0); // =(
     }
 
-    public void save(User user) {
+    public List<User> getAll() {
+        Session session= HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction transaction= session.beginTransaction();
+        List<User> result=session.createSelectionQuery("from User", User.class)
+                .getResultList();
+        transaction.commit();
+        session.close();
+
+
+        return result;
+    }
+
+    public Integer save(User user) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
         session.persist(user);
         transaction.commit();
         session.close();
+        //System.out.println("--------------------------------------"+user.getId());
+        return user.getId();
     }
 
     public void update(User user) {
