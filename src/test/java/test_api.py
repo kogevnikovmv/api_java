@@ -1,8 +1,15 @@
 import requests
 
-r = requests.post('http://127.0.0.1:8080/register', json={"login": "qwerty3", "email": "qwerty3@mail.ru", "password": "goodpassword3"})
-#r = requests.post('http://95.26.136.23:80/login', json={"username": "mihail", "email": "mihail@mail.ru", "password": "12345678"})
-#r = requests.post('http://127.0.0.1:8000/auth', json={"token": "4cd549907d6a41fc98a9e1b67ad3d61a"})
+#r = requests.post('http://127.0.0.1:8080/register', json={"login": "qwerty6", "email": "qwerty6@mail.ru", "password": "goodpassword6"})
 
-print(r.status_code)
-print(r.json())
+#print(r.status_code)
+#print(r.json())
+
+r2 = requests.post('http://127.0.0.1:8080/user/test', json={"login": "qwerty6", "password": "goodpassword6"})
+
+print(r2.status_code)
+print(r2.json())
+
+
+
+# надо добавить header: "Authorization: Bearer "

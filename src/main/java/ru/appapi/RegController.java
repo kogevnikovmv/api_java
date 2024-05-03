@@ -1,9 +1,6 @@
 package ru.appapi;
 
-import models.BaseResponse;
-import models.LoginRequest;
-import models.RegisterRequest;
-import models.User;
+import models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,12 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 import static ru.appapi.MyApp.userService;
 
 @RestController
-@RequestMapping()
+@RequestMapping("/user")
 public class RegController {
 
     private static final String SUCCESS_STATUS = "success";
@@ -46,5 +44,24 @@ public class RegController {
                 )
         )==null) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something wrong");}
         else {return "{\"message\": \"new account created\"}";}
+    }
+
+    @PostMapping("/chng-psswrd")
+    String changePassword (@RequestHeader HashMap<String, String> headers, @RequestBody ChangePasswordRequest request) {
+        if (headers.containsKey("Authorization")) {
+            String token = headers.get("Authorization:").split(" ")[0];
+            userService.changePassword(token, request.getPassword());
+            // дописать
+        }
+        else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token(?)");} // ?
+
+
+        return "";
+    }
+
+    @PostMapping("/test")
+    String test (@RequestBody LoginRequest request) {
+        User user=userService.findUserByLogin(request.getLogin());
+        return "{\"message\": "+"\""+user.getHashPassword()+"\"}";
     }
 }

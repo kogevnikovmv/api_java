@@ -24,7 +24,18 @@ public class UserDAO {
         return result.get(0); // =(
     }
 
-    public List<User> getAll() {
+    public User findByToken(String token) {
+        Session session= HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction transaction= session.beginTransaction();
+        List<User> user=session.createSelectionQuery("from Token where token= :value", User.class)
+                .setParameter("value", token)
+                .getResultList();
+        transaction.commit();
+        session.close();
+        return user.get(0); // =(
+    }
+
+    public List<User> getAllUsers() {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
         List<User> result=session.createSelectionQuery("from User", User.class)
@@ -60,10 +71,5 @@ public class UserDAO {
         session.remove(user);
         transaction.commit();
         session.close();
-    }
-
-    public List<User> findAllUsers() {
-        List<User> users= (List<User>) HibernateSessionFactory.getSessionFactory().openSession().createQuery("FROM Users").list();
-        return users;
     }
 }

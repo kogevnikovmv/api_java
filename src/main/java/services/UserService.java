@@ -4,6 +4,7 @@ import dao.UserDAO;
 import models.User;
 
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private UserDAO userDao= new UserDAO();
@@ -24,11 +25,13 @@ public class UserService {
         return userDao.findByLogin(login);
     }
 
-    public List<User> getAll() {
-        return userDao.getAll();
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
     }
 
     public Integer saveUser(User user) {
+        //выглядит отвратно
+        user.setHashPassword(BCrypt.hashpw(user.getHashPassword(), BCrypt.gensalt(12)));
         return userDao.save(user);
     }
 
@@ -36,11 +39,14 @@ public class UserService {
         userDao.update(user);
     }
 
+    public void changePassword(String token, String newPassword) {
+        User user=userDao.findByLogin(token);
+        user.setHashPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
+        userDao.update(user);
+    }
+
     public void deleteUser(User user) {
         userDao.delete(user);
     }
 
-    public List<User> findAllUsers() {
-        return userDao.findAllUsers();
-    }
 }

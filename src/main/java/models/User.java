@@ -8,13 +8,15 @@ public class User {
 
     private int id;
     private String login;
-    private String password;
+    private String hashPassword;
     private String email;
 
-    public User(String login, String email, String password) {
+    public User() {}
+
+    public User(String login, String email, String hashPassword) {
         this.login = login;
         this.email = email;
-        this.password = password;
+        this.hashPassword = hashPassword;
     }
 
     @Id
@@ -38,12 +40,12 @@ public class User {
     }
 
     @Column(name = "password")
-    public String getPassword() {
-        return password;
+    public String getHashPassword() {
+        return hashPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setHashPassword(String hashPassword) {
+        this.hashPassword = hashPassword;
     }
 
     @Column(name = "email")
