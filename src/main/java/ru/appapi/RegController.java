@@ -37,26 +37,32 @@ public class RegController {
     @PostMapping("/register")
     String register (@RequestBody RegisterRequest request) {
         //return "{\"email\": \""+user.getEmail()+"\"}";*/
-        if (userService.saveUser(new User(
+        String token=userService.saveUser(new User(
+                request.getLogin(),
+                request.getEmail(),
+                request.getPassword()
+        )); // возвращается User, а не токен
+
+        /*if (userService.saveUser(new User(
                 request.getLogin(),
                 request.getEmail(),
                 request.getPassword()
                 )
-        )==null) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something wrong");}
-        else {return "{\"message\": \"new account created\"}";}
+        )!=null) {return "{\"token\": \""+user.getEmail()+"\"}";}
+        else {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something wrong");}*/
+
+        //else {return "{\"message\": \"new account created\"}";}
+        return "";
     }
 
     @PostMapping("/chng-psswrd")
     String changePassword (@RequestHeader HashMap<String, String> headers, @RequestBody ChangePasswordRequest request) {
         if (headers.containsKey("Authorization")) {
-            String token = headers.get("Authorization:").split(" ")[0];
-            userService.changePassword(token, request.getPassword());
-            // дописать
-        }
-        else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token(?)");} // ?
-
-
-        return "";
+            String token = headers.get("Authorization:").split(" ")[1];
+            if (userService.changePassword(token, request.getPassword())==null) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token(?)");} //?
+            else {throw new ResponseStatusException(HttpStatus.OK, "Password changed");}
+        } else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You need to authorize");}
     }
 
     @PostMapping("/test")

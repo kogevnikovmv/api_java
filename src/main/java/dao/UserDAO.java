@@ -47,22 +47,22 @@ public class UserDAO {
         return result;
     }
 
-    public Integer save(User user) {
+    public User save(User user) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
         session.persist(user);
         transaction.commit();
         session.close();
-        //System.out.println("--------------------------------------"+user.getId());
-        return user.getId();
+        return user; // нужно чтобы возвращал токен
     }
 
-    public void update(User user) {
+    public User update(User user) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
         session.merge(user);
         transaction.commit();
         session.close();
+        return user;
     }
 
     public void delete(User user) {

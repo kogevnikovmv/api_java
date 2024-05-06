@@ -1,6 +1,7 @@
 package services;
 
 import dao.UserDAO;
+import models.Token;
 import models.User;
 
 import java.util.List;
@@ -29,9 +30,10 @@ public class UserService {
         return userDao.getAllUsers();
     }
 
-    public Integer saveUser(User user) {
+    public String saveUser(User user) {
         //выглядит отвратно
         user.setHashPassword(BCrypt.hashpw(user.getHashPassword(), BCrypt.gensalt(12)));
+
         return userDao.save(user);
     }
 
@@ -39,10 +41,10 @@ public class UserService {
         userDao.update(user);
     }
 
-    public void changePassword(String token, String newPassword) {
-        User user=userDao.findByLogin(token);
+    public User changePassword(String token, String newPassword) {
+        User user=userDao.findByToken(token);
         user.setHashPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
-        userDao.update(user);
+        return userDao.update(user);
     }
 
     public void deleteUser(User user) {
