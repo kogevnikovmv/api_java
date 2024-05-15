@@ -1,5 +1,6 @@
 package utils;
 
+import models.Token;
 import models.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -14,6 +15,7 @@ public class HibernateSessionFactory {
             try {
                 Configuration configuration = new Configuration().configure();
                 configuration.addAnnotatedClass(User.class);
+                configuration.addAnnotatedClass(Token.class);
                 //StandardServiceRegistryBuilder builder= new StandardServiceRegistryBuilder()
                 //        .applySettings(configuration.getProperties());
                 //sessionFactory= configuration.buildSessionFactory(builder.build());

@@ -5,6 +5,9 @@ import models.Token;
 import models.User;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
@@ -30,21 +33,36 @@ public class UserService {
         return userDao.getAllUsers();
     }
 
+    public List<String> getAllTokens() {
+        return userDao.getAllTokens().stream()
+                .map(Token::getToken)
+                .collect(Collectors.toList());
+    }
+
+    //save user and create token
     public String saveUser(User user) {
         //выглядит отвратно
         user.setHashPassword(BCrypt.hashpw(user.getHashPassword(), BCrypt.gensalt(12)));
-
-        return userDao.save(user);
+        Integer userId=userDao.saveUser(user).getId();
+        return userDao.saveToken(new Token(userId, UUID.randomUUID()
+                .toString()
+                .replace("-", "")));
     }
 
     public void updateUser(User user) {
         userDao.update(user);
     }
 
-    public User changePassword(String token, String newPassword) {
+    public boolean changePassword(String token, String newPassword) {
         User user=userDao.findByToken(token);
-        user.setHashPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
-        return userDao.update(user);
+        if (user!=null) {
+            user.setHashPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
+            userDao.update(user);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public void deleteUser(User user) {

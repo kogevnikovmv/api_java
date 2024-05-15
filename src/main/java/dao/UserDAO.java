@@ -1,5 +1,6 @@
 package dao;
 
+import models.Token;
 import models.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -47,13 +48,34 @@ public class UserDAO {
         return result;
     }
 
-    public User save(User user) {
+    public User saveUser(User user) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
         session.persist(user);
         transaction.commit();
         session.close();
-        return user; // нужно чтобы возвращал токен
+        return user;
+    }
+
+    public String saveToken(Token token) {
+        Session session= HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction transaction= session.beginTransaction();
+        session.persist(token);
+        transaction.commit();
+        session.close();
+        return token.getToken();
+    }
+
+    public List<Token> getAllTokens() {
+        Session session= HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction transaction= session.beginTransaction();
+        List<Token> result=session.createSelectionQuery("from Token", Token.class)
+                .getResultList();
+        transaction.commit();
+        session.close();
+
+
+        return result;
     }
 
     public User update(User user) {
