@@ -4,8 +4,8 @@ public class TestUser {
     public String login;
     public String email;
     public String password;
-    public String token;
 
+    public TestUser (){}
     public TestUser(String login, String email, String password) {
         this.login = login;
         this.email = email;
@@ -36,11 +36,4 @@ public class TestUser {
         this.password = password;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 }

@@ -1,4 +1,6 @@
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.io.IOUtils;
 import testModels.TestUser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,31 +15,30 @@ public class TestRegistration {
     static String urlRegistration ="http://127.0.0.1:8080/user/register";
     static String urlLogin="http://127.0.0.1:8080/user/login";
     static TestUser testUser;
+    static ObjectMapper objectMapper = new ObjectMapper();
 
-    static HttpResponse sendPOSTRequest(String url, JSONObject json) throws IOException {
+    static HttpResponse sendPOSTRequest(String url, String json) throws IOException {
         HttpClient httpClient=HttpClientBuilder.create().build();
         HttpPost postRequest= new HttpPost(url);
-        StringEntity postBody = new StringEntity(json.toString());
+        StringEntity postBody = new StringEntity(json);
         postRequest.setEntity(postBody);
         postRequest.setHeader("Content-type", "application/json");
         return httpClient.execute(postRequest);
     }
     static void registerTestUser() throws IOException {
-        JSONObject json=new JSONObject();
-        json.put("login", testUser.getLogin());
-        json.put("email", testUser.getEmail());
-        json.put("password", testUser.getPassword());
+        String json = objectMapper.writeValueAsString(testUser);
+        System.out.println(json);
         HttpResponse response = sendPOSTRequest(urlRegistration, json);
-        String token=response.getEntity().toString().split(" ")[1];
-        System.out.println(response.getEntity().toString());
-        System.out.println(token);
-        //testUser.setToken();
+
+        String jsonResponse = IOUtils.toString(response.getEntity().getContent());
+
+        System.out.println(jsonResponse);
     }
     public void loginTestUser() {    }
     public void deleteTestUser() {}
 
     public static void main(String[] args) throws IOException {
-        TestUser testUser =new TestUser(
+        testUser =new TestUser(
                 "qwerty1",
                 "qwerty1@yandex.ru",
                 "simplepassword1"
