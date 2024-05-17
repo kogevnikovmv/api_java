@@ -47,7 +47,7 @@ public class RegController {
     @PostMapping("/chng-psswrd")
     String changePassword (@RequestHeader HashMap<String, String> headers, @RequestBody ChangePasswordRequest request) {
         if (headers.containsKey("Authorization")) {
-            String token = headers.get("Authorization:").split(" ")[1];
+            String token = headers.get("Authorization").split(" ")[1];
             if (!userService.changePassword(token, request.getPassword())) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token(?)");} //?
             else {throw new ResponseStatusException(HttpStatus.OK, "Password changed");}
