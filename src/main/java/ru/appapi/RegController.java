@@ -21,17 +21,22 @@ public class RegController {
     private static final String ERROR_STATUS = "error";
     private static final int CODE_SUCCESS = 100;
     private static final int AUTH_FAILURE = 102;
-    //private UserService userService = new UserService();
+
 
     @PostMapping("/login")
-    public BaseResponse login (@RequestBody LoginRequest request) {
-        final BaseResponse response;
-        if (Objects.equals(request.getLogin(), "admin") && Objects.equals(request.getPassword(), "goodpassword")) {
-            response= new BaseResponse(SUCCESS_STATUS, CODE_SUCCESS);
+    public String login (@RequestBody LoginRequest request) {
+        User user=userService.findUserByLogin(request.getLogin());
+        if (user!=null) {
+            if (userService.validateUserByLogin(user, request.getPassword())) {
+                return "{\"auth_token\": \"Bearer tokenblablabla\"}"; //delete
+                //return "{\"auth_token\": \"Bearer "+token+"\"}"; // пока не работает
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
+            }
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
         }
-        return response;
+
     }
 
     @PostMapping("/register")
@@ -41,7 +46,7 @@ public class RegController {
                 request.getEmail(),
                 request.getPassword()
         ));
-        return "{\"auth_token\": \""+token+"\"}";
+        return "{\"auth_token\": \"Bearer "+token+"\"}";
     }
 
     @PostMapping("/chng-psswrd")

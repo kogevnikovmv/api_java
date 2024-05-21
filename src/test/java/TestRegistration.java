@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -70,18 +71,33 @@ public class TestRegistration {
                 jsonResponse,
                 new TypeReference<HashMap<String,String>>() {}
         );
-        if (jsonMap.containsKey("")) {
-            authToken=jsonMap.get("Authorization").split(" ")[1];
+        if (jsonMap.containsKey("auth_token")) {
+            authToken=jsonMap.get("auth_token").split(" ")[1];
         }
         Assertions.assertNotNull(authToken, "Токен авторизации не получен");
     }
 
     @Test
-    public void loginTestUser() {
+    public void loginTestUser() throws IOException {
         testLoginRequest= new TestLoginRequest(
                 testRegisterRequest.getLogin(),
-                testRegisterRequest.getPassword());
+                testRegisterRequest.getPassword()
+        );
+        String json = objectMapper.writeValueAsString(testLoginRequest);
+        System.out.println(json);
+        HttpResponse response = sendPOSTRequest(urlLogin, json);
+
+        String jsonResponse = IOUtils.toString(response.getEntity().getContent());
+        HashMap<String, String> jsonMap = objectMapper.readValue(
+                jsonResponse,
+                new TypeReference<HashMap<String,String>>() {}
+        );
+        if (jsonMap.containsKey("Authorization")) {
+            authToken=jsonMap.get("Authorization").split(" ")[1];
+        }
+        Assertions.assertNotNull(authToken, "Токен авторизации не получен");
     }
+    
     public void deleteTestUser() {}
 
     public static void main(String[] args) throws IOException {

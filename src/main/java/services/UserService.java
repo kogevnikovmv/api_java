@@ -54,7 +54,7 @@ public class UserService {
     }
 
     public boolean changePassword(String token, String newPassword) {
-        User user=userDao.findByToken(token);
+        User user=validateUserByToken(token);
         if (user!=null) {
             user.setHashPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
             userDao.update(user);
@@ -63,6 +63,14 @@ public class UserService {
         else {
             return false;
         }
+    }
+
+    public User validateUserByToken(String token) {
+        return userDao.findByToken(token);
+    }
+
+    public boolean validateUserByLogin(User user, String candidatePassword) {
+        return BCrypt.checkpw(candidatePassword, user.getHashPassword());
     }
 
     public void deleteUser(User user) {
