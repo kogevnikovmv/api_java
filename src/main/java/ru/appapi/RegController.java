@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 import static ru.appapi.MyApp.userService;
 
@@ -62,6 +61,6 @@ public class RegController {
     @PostMapping("/test")
     String test (@RequestBody LoginRequest request) {
         User user=userService.findUserByLogin(request.getLogin());
-        return "{\"message\": "+"\""+user.getHashPassword()+"\"}";
+        return "{\"message\": "+"\""+user.getLogin()+"\"}";
     }
 }

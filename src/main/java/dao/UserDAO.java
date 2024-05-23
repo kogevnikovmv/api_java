@@ -48,7 +48,7 @@ public class UserDAO {
         return result;
     }
 
-    public User saveUser(User user) {
+    public User save(User user) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
         session.persist(user);
@@ -57,13 +57,13 @@ public class UserDAO {
         return user;
     }
 
-    public String saveToken(Token token) {
+    public Token save(Token token) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
         session.persist(token);
         transaction.commit();
         session.close();
-        return token.getToken();
+        return token;
     }
 
     public List<Token> getAllTokens() {
@@ -85,6 +85,15 @@ public class UserDAO {
         transaction.commit();
         session.close();
         return user;
+    }
+
+    public Token update(Token token) {
+        Session session= HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction transaction= session.beginTransaction();
+        session.merge(token);
+        transaction.commit();
+        session.close();
+        return token;
     }
 
     public void delete(User user) {

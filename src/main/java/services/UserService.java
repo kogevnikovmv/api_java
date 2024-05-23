@@ -41,12 +41,14 @@ public class UserService {
 
     //save user and create token
     public String saveUser(User user) {
-        //выглядит отвратно
-        user.setHashPassword(BCrypt.hashpw(user.getHashPassword(), BCrypt.gensalt(12)));
-        Integer userId=userDao.saveUser(user).getId();
-        return userDao.saveToken(new Token(userId, UUID.randomUUID()
+        Token token=new Token(user, UUID.randomUUID()
                 .toString()
-                .replace("-", "")));
+                .replace("-", ""));
+        user.setToken(token);
+        token.setUser(user);
+        userDao.save(user);
+        //userDao.save(token);
+        return token.getToken();
     }
 
     public void updateUser(User user) {

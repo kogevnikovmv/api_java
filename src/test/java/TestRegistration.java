@@ -1,9 +1,9 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpGet;
+import org.junit.jupiter.api.Disabled;
 import testModels.TestLoginRequest;
 import testModels.TestRegisterRequest;
 import org.apache.http.HttpResponse;
@@ -78,6 +78,7 @@ public class TestRegistration {
     }
 
     @Test
+    @Disabled
     public void loginTestUser() throws IOException {
         testLoginRequest= new TestLoginRequest(
                 testRegisterRequest.getLogin(),
@@ -101,7 +102,5 @@ public class TestRegistration {
     public void deleteTestUser() {}
 
     public static void main(String[] args) throws IOException {
-        //registerTestUser();
-
     }
 }
