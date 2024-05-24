@@ -7,15 +7,15 @@ import jakarta.persistence.*;
 public class Token {
 
     private int id;
-    private String token;
+    private String tokenValue;
     private User user;
 
     public Token() {
     }
 
-    public Token(User user, String token) {
+    public Token(User user, String tokenValue) {
         this.user = user;
-        this.token = token;
+        this.tokenValue = tokenValue;
     }
 
     @Id
@@ -30,12 +30,12 @@ public class Token {
     }
 
     @Column(name = "token")
-    public String getToken() {
-        return token;
+    public String getTokenValue() {
+        return tokenValue;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setTokenValue(String tokenValue) {
+        this.tokenValue = tokenValue;
     }
 
     @OneToOne

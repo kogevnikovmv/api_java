@@ -1,10 +1,12 @@
 package testModels;
+import models.Token;
 import models.User;
 
 public class TestUser extends User {
     private String login;
     private String hashPassword;
     private String email;
+    private Token token;
 
     public TestUser(String login, String email, String hashPassword) {
         this.login=login;
@@ -40,5 +42,15 @@ public class TestUser extends User {
     @Override
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public Token getToken() {
+        return token;
+    }
+
+    @Override
+    public void setToken(Token token) {
+        this.token = token;
     }
 }

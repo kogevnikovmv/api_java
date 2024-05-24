@@ -27,8 +27,8 @@ public class RegController {
         User user=userService.findUserByLogin(request.getLogin());
         if (user!=null) {
             if (userService.validateUserByLogin(user, request.getPassword())) {
-                return "{\"auth_token\": \"Bearer tokenblablabla\"}"; //delete
-                //return "{\"auth_token\": \"Bearer "+token+"\"}"; // пока не работает
+                String token=user.getToken().getTokenValue();
+                return "{\"auth_token\": \"Bearer "+token+"\"}";
             } else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
             }

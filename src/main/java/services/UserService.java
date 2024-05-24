@@ -35,7 +35,7 @@ public class UserService {
 
     public List<String> getAllTokens() {
         return userDao.getAllTokens().stream()
-                .map(Token::getToken)
+                .map(Token::getTokenValue)
                 .collect(Collectors.toList());
     }
 
@@ -48,7 +48,7 @@ public class UserService {
         token.setUser(user);
         userDao.save(user);
         //userDao.save(token);
-        return token.getToken();
+        return token.getTokenValue();
     }
 
     public void updateUser(User user) {

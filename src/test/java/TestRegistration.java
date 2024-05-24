@@ -55,15 +55,16 @@ public class TestRegistration {
         return httpClient.execute(getRequest);
     }
 
-    @Test
-    public void registerTestUser() throws IOException {
+
+
+
+    public String registerTestUser() throws IOException {
         testRegisterRequest=new TestRegisterRequest(
                 testUser.getLogin(),
                 testUser.getEmail(),
                 testUser.getHashPassword()
         );
         String json = objectMapper.writeValueAsString(testRegisterRequest);
-        System.out.println(json);
         HttpResponse response = sendPOSTRequest(urlRegistration, json);
 
         String jsonResponse = IOUtils.toString(response.getEntity().getContent());
@@ -74,18 +75,17 @@ public class TestRegistration {
         if (jsonMap.containsKey("auth_token")) {
             authToken=jsonMap.get("auth_token").split(" ")[1];
         }
-        Assertions.assertNotNull(authToken, "Токен авторизации не получен");
+        Assertions.assertNotNull(authToken, "После регистрации токен авторизации не получен");
+        return authToken;
     }
 
-    @Test
-    @Disabled
-    public void loginTestUser() throws IOException {
+
+    public String loginTestUser() throws IOException {
         testLoginRequest= new TestLoginRequest(
-                testRegisterRequest.getLogin(),
-                testRegisterRequest.getPassword()
+                testUser.getLogin(),
+                testUser.getHashPassword()
         );
         String json = objectMapper.writeValueAsString(testLoginRequest);
-        System.out.println(json);
         HttpResponse response = sendPOSTRequest(urlLogin, json);
 
         String jsonResponse = IOUtils.toString(response.getEntity().getContent());
@@ -93,13 +93,21 @@ public class TestRegistration {
                 jsonResponse,
                 new TypeReference<HashMap<String,String>>() {}
         );
-        if (jsonMap.containsKey("Authorization")) {
-            authToken=jsonMap.get("Authorization").split(" ")[1];
+        if (jsonMap.containsKey("auth_token")) {
+            authToken=jsonMap.get("auth_token").split(" ")[1];
         }
-        Assertions.assertNotNull(authToken, "Токен авторизации не получен");
+        Assertions.assertNotNull(authToken, "После авторизации токен не получен");
+        return authToken;
     }
     
     public void deleteTestUser() {}
+
+    @Test
+    void testRegistration() throws IOException {
+        Assertions.assertEquals(registerTestUser(), loginTestUser());
+
+
+    }
 
     public static void main(String[] args) throws IOException {
     }
