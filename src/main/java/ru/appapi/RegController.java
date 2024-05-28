@@ -30,10 +30,12 @@ public class RegController {
                 String token=user.getToken().getTokenValue();
                 return "{\"auth_token\": \"Bearer "+token+"\"}";
             } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
+                //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{\"err-message\": \"Wrong login or password\"}");
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
+            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{\"err-message\": \"Wrong login or password\"}");
         }
 
     }

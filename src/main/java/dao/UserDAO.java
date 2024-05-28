@@ -17,12 +17,13 @@ public class UserDAO {
     public User findByLogin(String login) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
-        List<User> result=session.createSelectionQuery("from User where login= :value", User.class)
+        List <User> result=session.createSelectionQuery("from User where login= :value", User.class)
                 .setParameter("value", login)
                 .getResultList();
         transaction.commit();
         session.close();
-        return result.get(0); // =(
+        if (result.isEmpty()) {return null;}
+        else {return result.get(0);}
     }
 
     public User findByEmail(String email) {
@@ -33,7 +34,8 @@ public class UserDAO {
                 .getResultList();
         transaction.commit();
         session.close();
-        return result.get(0); // =(
+        if (result.isEmpty()) {return null;}
+        else {return result.get(0);}
     }
 
     public User findByToken(String token) {

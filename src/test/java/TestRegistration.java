@@ -90,6 +90,7 @@ public class TestRegistration {
 
 
     public String loginTestUser() throws IOException {
+        String errorMessage="";
         String authToken = null;
         testLoginRequest= new TestLoginRequest(
                 testUser.getLogin(),
@@ -106,7 +107,10 @@ public class TestRegistration {
         if (jsonMap.containsKey("auth_token")) {
             authToken=jsonMap.get("auth_token").split(" ")[1];
         }
-        Assertions.assertNotNull(authToken, "После авторизации токен не получен");
+        if (jsonMap.containsKey("err-message")) {
+            errorMessage="\n"+jsonMap.get("err-message");
+        }
+        Assertions.assertNotNull(authToken, "После авторизации токен не получен"+ errorMessage);
         return authToken;
     }
     
