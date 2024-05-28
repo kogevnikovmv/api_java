@@ -40,6 +40,12 @@ public class RegController {
 
     @PostMapping("/register")
     String register (@RequestBody RegisterRequest request) {
+        if (userService.findUserByLogin(request.getLogin())!=null) {
+            return "{\"err-message\": \"User with this username already exists\"}";
+        }
+        if (userService.findUserByEmail(request.getEmail())!=null) {
+            return "{\"err-message\": \"User with this e-mail already exists\"}";
+        }
         String token=userService.saveUser(new User(
                 request.getLogin(),
                 request.getEmail(),
@@ -56,11 +62,5 @@ public class RegController {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token(?)");} //?
             else {throw new ResponseStatusException(HttpStatus.OK, "Password changed");}
         } else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You need to authorize");}
-    }
-
-    @PostMapping("/test")
-    String test (@RequestBody LoginRequest request) {
-        User user=userService.findUserByLogin(request.getLogin());
-        return "{\"message\": "+"\""+user.getLogin()+"\"}";
     }
 }

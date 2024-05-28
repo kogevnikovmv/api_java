@@ -3,7 +3,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpGet;
-import org.junit.jupiter.api.Disabled;
 import testModels.TestLoginRequest;
 import testModels.TestRegisterRequest;
 import org.apache.http.HttpResponse;
@@ -22,16 +21,22 @@ import testModels.TestUser;
 
 
 public class TestRegistration {
-    private String urlRegistration ="http://127.0.0.1:8080/user/register";
+    private static String urlRegistration ="http://127.0.0.1:8080/user/register";
     private String urlLogin="http://127.0.0.1:8080/user/login";
-    private String authToken;
+    private static String userAuthToken;
     static TestRegisterRequest testRegisterRequest;
     static TestLoginRequest testLoginRequest;
-    static TestUser testUser;
+    private static TestUser testUser;
     static ObjectMapper objectMapper = new ObjectMapper();
 
+
     @BeforeAll
-    static void makeTestData() {
+    static void setup() throws IOException {
+        makeTestData();
+        registerTestUser();
+    }
+
+    public static void makeTestData() {
         testUser = new TestUser(
                 "qwerty1",
                 "qwerty1@yandex.ru",
@@ -39,7 +44,7 @@ public class TestRegistration {
         );
     }
 
-    static HttpResponse sendPOSTRequest(String url, String json) throws IOException {
+    public static HttpResponse sendPOSTRequest(String url, String json) throws IOException {
         HttpClient httpClient=HttpClientBuilder.create().build();
         HttpPost postRequest= new HttpPost(url);
         StringEntity postBody = new StringEntity(json);
@@ -48,7 +53,7 @@ public class TestRegistration {
         return httpClient.execute(postRequest);
     }
 
-    static HttpResponse sendGETRequest(String url) throws IOException {
+    public HttpResponse sendGETRequest(String url) throws IOException {
         HttpClient httpClient=HttpClientBuilder.create().build();
         HttpGet getRequest= new HttpGet(url);
         getRequest.setHeader("Authorization", "application/json");
@@ -58,7 +63,8 @@ public class TestRegistration {
 
 
 
-    public String registerTestUser() throws IOException {
+    public static void registerTestUser() throws IOException {
+        String errorMessage="";
         testRegisterRequest=new TestRegisterRequest(
                 testUser.getLogin(),
                 testUser.getEmail(),
@@ -73,14 +79,18 @@ public class TestRegistration {
                 new TypeReference<HashMap<String,String>>() {}
         );
         if (jsonMap.containsKey("auth_token")) {
-            authToken=jsonMap.get("auth_token").split(" ")[1];
+            userAuthToken =jsonMap.get("auth_token").split(" ")[1];
         }
-        Assertions.assertNotNull(authToken, "После регистрации токен авторизации не получен");
-        return authToken;
+        if (jsonMap.containsKey("err-message")) {
+            errorMessage="\n"+jsonMap.get("err-message");
+        }
+        Assertions.assertNotNull(userAuthToken, "При регистрации тестового пользователя " +
+                "токен авторизации не получен." + errorMessage);
     }
 
 
     public String loginTestUser() throws IOException {
+        String authToken = null;
         testLoginRequest= new TestLoginRequest(
                 testUser.getLogin(),
                 testUser.getHashPassword()
@@ -103,10 +113,8 @@ public class TestRegistration {
     public void deleteTestUser() {}
 
     @Test
-    void testRegistration() throws IOException {
-        Assertions.assertEquals(registerTestUser(), loginTestUser());
-
-
+    public void testAuthorizationWithLoginPassword() throws IOException {
+        Assertions.assertEquals(userAuthToken, loginTestUser());
     }
 
     public static void main(String[] args) throws IOException {

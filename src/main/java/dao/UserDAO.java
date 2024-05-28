@@ -25,6 +25,17 @@ public class UserDAO {
         return result.get(0); // =(
     }
 
+    public User findByEmail(String email) {
+        Session session= HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction transaction= session.beginTransaction();
+        List<User> result=session.createSelectionQuery("from User where email= :value", User.class)
+                .setParameter("value", email)
+                .getResultList();
+        transaction.commit();
+        session.close();
+        return result.get(0); // =(
+    }
+
     public User findByToken(String token) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
