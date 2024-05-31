@@ -1,13 +1,13 @@
-package services;
+package ru.appapi.services;
 
-import dao.UserDAO;
-import models.Token;
+import ru.appapi.dao.UserDAO;
+import ru.appapi.models.Token;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import models.User;
+import ru.appapi.models.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
@@ -50,7 +50,6 @@ public class UserService {
         user.setToken(token);
         token.setUser(user);
         userDao.save(user);
-        //userDao.save(token);
         return token.getTokenValue();
     }
 
@@ -59,7 +58,7 @@ public class UserService {
     }
 
     public boolean changePassword(String token, String newPassword) {
-        /*User user=validateUserByToken(token);
+        User user=validateUserByToken(token);
         if (user!=null) {
             user.setHashPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
             userDao.update(user);
@@ -67,8 +66,8 @@ public class UserService {
         }
         else {
             return false;
-        }*/
-        return true; //delete
+        }
+
     }
 
     public User validateUserByToken(String token) {

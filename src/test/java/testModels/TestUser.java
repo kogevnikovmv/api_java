@@ -1,6 +1,6 @@
 package testModels;
-import models.Token;
-import models.User;
+import ru.appapi.models.Token;
+import ru.appapi.models.User;
 
 public class TestUser extends User {
     private String login;

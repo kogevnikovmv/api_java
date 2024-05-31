@@ -1,7 +1,6 @@
 package ru.appapi.controllers;
 
-import models.Token;
-import models.User;
+import ru.appapi.models.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;

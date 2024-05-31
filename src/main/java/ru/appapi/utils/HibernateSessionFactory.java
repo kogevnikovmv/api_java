@@ -1,7 +1,7 @@
-package utils;
+package ru.appapi.utils;
 
-import models.Token;
-import models.User;
+import ru.appapi.models.Token;
+import ru.appapi.models.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 

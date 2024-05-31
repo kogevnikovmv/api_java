@@ -1,10 +1,10 @@
-package dao;
+package ru.appapi.dao;
 
-import models.Token;
-import models.User;
+import ru.appapi.models.Token;
+import ru.appapi.models.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import utils.HibernateSessionFactory;
+import ru.appapi.utils.HibernateSessionFactory;
 
 import java.util.List;
 

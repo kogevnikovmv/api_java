@@ -1,12 +1,16 @@
 package ru.appapi.controllers;
 
-import models.*;
+import ru.appapi.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.appapi.models.ChangePasswordRequest;
+import ru.appapi.models.LoginRequest;
+import ru.appapi.models.RegisterRequest;
+import ru.appapi.models.User;
 
 import java.util.HashMap;
 

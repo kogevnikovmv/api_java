@@ -1,8 +1,9 @@
-package models;
+package ru.appapi.models;
 
-public class LoginRequest {
+public class RegisterRequest {
 
     private String login;
+    private String email;
     private String password;
 
     public String getLogin() {
@@ -13,6 +14,10 @@ public class LoginRequest {
         this.login = login;
     }
 
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email; }
+
     public String getPassword() {
         return password;
     }
@@ -21,3 +26,4 @@ public class LoginRequest {
         this.password = password;
     }
 }
+

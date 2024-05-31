@@ -1,4 +1,4 @@
-package models;
+package ru.appapi.models;
 
 public class BaseResponse {
     private final String status;

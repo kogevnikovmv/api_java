@@ -3,9 +3,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpGet;
-import testModels.Request;
-import testModels.TestLoginRequest;
-import testModels.TestRegisterRequest;
+import org.junit.jupiter.api.Disabled;
+import testModels.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -18,13 +17,13 @@ import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import testModels.TestUser;
 
 
 public class TestRegistration {
     private static String urlRegistration ="http://127.0.0.1:8080/user/register";
     private static String urlLogin="http://127.0.0.1:8080/user/login";
     private static String urlHomePage="http://127.0.0.1:8080";
+    private static String urlChangePassword="http://127.0.0.1:8080/chng-psswrd";
     private static String userAuthToken;
     static TestRegisterRequest testRegisterRequest;
     static TestLoginRequest testLoginRequest;
@@ -144,6 +143,23 @@ public class TestRegistration {
             errorMessage="\n"+jsonMap.get("err-message");
         }
         Assertions.assertEquals("Hello, "+testUser.getLogin()+"!", response, errorMessage);
+    }
+
+    @Test
+    @Disabled //не дописан
+    public void testUserChangePassword() throws IOException {
+        String errorMessage="";
+        var testChangePasswordRequest = new TestChangePasswordRequest(
+                "MyNewPerfectPassword"
+        );
+
+        HashMap<String, String> jsonMap = sendPOSTRequest(urlChangePassword, testChangePasswordRequest);
+
+        if (jsonMap.containsKey("err-message")) {
+            errorMessage="\n"+jsonMap.get("err-message");
+        }
+        Assertions.assertNotNull(userAuthToken, "При регистрации тестового пользователя " +
+                "токен авторизации не получен." + errorMessage);
     }
 
     public static void main(String[] args) throws IOException {
