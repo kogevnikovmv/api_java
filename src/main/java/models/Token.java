@@ -8,12 +8,12 @@ public class Token {
 
     private int id;
     private String tokenValue;
-    private User user;
+    private models.User user;
 
     public Token() {
     }
 
-    public Token(User user, String tokenValue) {
+    public Token(models.User user, String tokenValue) {
         this.user = user;
         this.tokenValue = tokenValue;
     }
@@ -29,7 +29,7 @@ public class Token {
         this.id = id;
     }
 
-    @Column(name = "token")
+    @Column(name = "tokenValue")
     public String getTokenValue() {
         return tokenValue;
     }
@@ -38,13 +38,12 @@ public class Token {
         this.tokenValue = tokenValue;
     }
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    public User getUser() {
+    @OneToOne(mappedBy = "token")
+    public models.User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(models.User user) {
         this.user = user;
     }
 }

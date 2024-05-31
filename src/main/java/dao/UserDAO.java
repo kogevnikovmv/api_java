@@ -41,12 +41,13 @@ public class UserDAO {
     public User findByToken(String token) {
         Session session= HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction= session.beginTransaction();
-        List<User> user=session.createSelectionQuery("from Token where token= :value", User.class)
+        List<Token> userToken=session.createSelectionQuery("from Token where tokenValue= :value", Token.class)
                 .setParameter("value", token)
                 .getResultList();
         transaction.commit();
         session.close();
-        return user.get(0); // =(
+
+        return userToken.get(0).getUser(); // =(
     }
 
     public List<User> getAllUsers() {

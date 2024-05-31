@@ -63,7 +63,8 @@ public class User {
         this.email = email;
     }
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="token_id")
     public Token getToken() {
         return token;
     }

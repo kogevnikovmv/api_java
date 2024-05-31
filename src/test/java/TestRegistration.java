@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpGet;
+import testModels.Request;
 import testModels.TestLoginRequest;
 import testModels.TestRegisterRequest;
 import org.apache.http.HttpResponse;
@@ -22,7 +23,8 @@ import testModels.TestUser;
 
 public class TestRegistration {
     private static String urlRegistration ="http://127.0.0.1:8080/user/register";
-    private String urlLogin="http://127.0.0.1:8080/user/login";
+    private static String urlLogin="http://127.0.0.1:8080/user/login";
+    private static String urlHomePage="http://127.0.0.1:8080";
     private static String userAuthToken;
     static TestRegisterRequest testRegisterRequest;
     static TestLoginRequest testLoginRequest;
@@ -44,20 +46,39 @@ public class TestRegistration {
         );
     }
 
-    public static HttpResponse sendPOSTRequest(String url, String json) throws IOException {
+    public static HashMap<String, String> sendPOSTRequest(String url, Request userRequest) throws IOException {
+
+        String json = objectMapper.writeValueAsString(userRequest);
+
         HttpClient httpClient=HttpClientBuilder.create().build();
         HttpPost postRequest= new HttpPost(url);
         StringEntity postBody = new StringEntity(json);
         postRequest.setEntity(postBody);
         postRequest.setHeader("Content-type", "application/json");
-        return httpClient.execute(postRequest);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        String jsonResponse = IOUtils.toString(response.getEntity().getContent());
+        HashMap<String, String> jsonMap = objectMapper.readValue(
+                jsonResponse,
+                new TypeReference<HashMap<String,String>>() {}
+        );
+        return jsonMap;
     }
 
-    public HttpResponse sendGETRequest(String url) throws IOException {
+    public HashMap<String, String> sendGETRequest(String url) throws IOException {
         HttpClient httpClient=HttpClientBuilder.create().build();
         HttpGet getRequest= new HttpGet(url);
-        getRequest.setHeader("Authorization", "application/json");
-        return httpClient.execute(getRequest);
+        if (userAuthToken!=null) {
+            getRequest.setHeader("Authorization", "Bearer "+userAuthToken);
+        }
+        HttpResponse response = httpClient.execute(getRequest);
+
+        String jsonResponse = IOUtils.toString(response.getEntity().getContent());
+        HashMap<String, String> jsonMap = objectMapper.readValue(
+                jsonResponse,
+                new TypeReference<HashMap<String,String>>() {}
+        );
+        return jsonMap;
     }
 
 
@@ -70,14 +91,9 @@ public class TestRegistration {
                 testUser.getEmail(),
                 testUser.getHashPassword()
         );
-        String json = objectMapper.writeValueAsString(testRegisterRequest);
-        HttpResponse response = sendPOSTRequest(urlRegistration, json);
 
-        String jsonResponse = IOUtils.toString(response.getEntity().getContent());
-        HashMap<String, String> jsonMap = objectMapper.readValue(
-                jsonResponse,
-                new TypeReference<HashMap<String,String>>() {}
-        );
+        HashMap<String, String> jsonMap = sendPOSTRequest(urlRegistration, testRegisterRequest);
+
         if (jsonMap.containsKey("auth_token")) {
             userAuthToken =jsonMap.get("auth_token").split(" ")[1];
         }
@@ -96,14 +112,9 @@ public class TestRegistration {
                 testUser.getLogin(),
                 testUser.getHashPassword()
         );
-        String json = objectMapper.writeValueAsString(testLoginRequest);
-        HttpResponse response = sendPOSTRequest(urlLogin, json);
 
-        String jsonResponse = IOUtils.toString(response.getEntity().getContent());
-        HashMap<String, String> jsonMap = objectMapper.readValue(
-                jsonResponse,
-                new TypeReference<HashMap<String,String>>() {}
-        );
+        HashMap<String, String> jsonMap = sendPOSTRequest(urlLogin, testLoginRequest);
+
         if (jsonMap.containsKey("auth_token")) {
             authToken=jsonMap.get("auth_token").split(" ")[1];
         }
@@ -119,6 +130,20 @@ public class TestRegistration {
     @Test
     public void testAuthorizationWithLoginPassword() throws IOException {
         Assertions.assertEquals(userAuthToken, loginTestUser());
+    }
+
+    @Test
+    public void testAuthorizationWithToken() throws IOException {
+        String errorMessage="";
+        String response=null;
+        HashMap <String, String> jsonMap=sendGETRequest(urlHomePage);
+        if (jsonMap.containsKey("message")) {
+            response=jsonMap.get("message");
+        }
+        if (jsonMap.containsKey("err-message")) {
+            errorMessage="\n"+jsonMap.get("err-message");
+        }
+        Assertions.assertEquals("Hello, "+testUser.getLogin()+"!", response, errorMessage);
     }
 
     public static void main(String[] args) throws IOException {

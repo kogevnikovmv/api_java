@@ -2,12 +2,12 @@ package services;
 
 import dao.UserDAO;
 import models.Token;
-import models.User;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import models.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
@@ -59,7 +59,7 @@ public class UserService {
     }
 
     public boolean changePassword(String token, String newPassword) {
-        User user=validateUserByToken(token);
+        /*User user=validateUserByToken(token);
         if (user!=null) {
             user.setHashPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
             userDao.update(user);
@@ -67,7 +67,8 @@ public class UserService {
         }
         else {
             return false;
-        }
+        }*/
+        return true; //delete
     }
 
     public User validateUserByToken(String token) {

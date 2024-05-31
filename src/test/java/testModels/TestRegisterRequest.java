@@ -1,8 +1,8 @@
 package testModels;
 
-import models.RegisterRequest;
+import testModels.Request;
 
-public class TestRegisterRequest extends RegisterRequest {
+public class TestRegisterRequest extends Request {
     public String login;
     public String email;
     public String password;

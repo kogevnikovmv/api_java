@@ -1,7 +1,7 @@
 package testModels;
-import models.LoginRequest;
+import testModels.Request;
 
-public class TestLoginRequest extends LoginRequest{
+public class TestLoginRequest extends Request{
 
     private String login;
     private String password;
@@ -11,22 +11,22 @@ public class TestLoginRequest extends LoginRequest{
         this.password = password;
     }
 
-    @Override
+
     public void setLogin(String login) {
         this.login = login;
     }
 
-    @Override
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    @Override
+
     public String getLogin() {
         return login;
     }
 
-    @Override
+
     public String getPassword() {
         return password;
     }
