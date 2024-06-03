@@ -44,9 +44,7 @@ public class UserService {
 
     //save user and create token
     public String saveUser(User user) {
-        Token token=new Token(user, UUID.randomUUID()
-                .toString()
-                .replace("-", ""));
+        Token token=createToken(user);
         user.setToken(token);
         token.setUser(user);
         userDao.save(user);
@@ -57,15 +55,20 @@ public class UserService {
         userDao.update(user);
     }
 
-    public boolean changePassword(String token, String newPassword) {
+    public String changePassword(String token, String newPassword) {
         User user=validateUserByToken(token);
         if (user!=null) {
             user.setHashPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
+
+            Token newToken=createToken();
+            user.setToken(newToken);
+            newToken.setUser(user);
+
             userDao.update(user);
-            return true;
+            return newToken.getTokenValue();
         }
         else {
-            return false;
+            return null;
         }
 
     }
@@ -80,6 +83,14 @@ public class UserService {
 
     public void deleteUser(User user) {
         userDao.delete(user);
+    }
+
+    public Token createToken(User user) {
+        return new Token(user, UUID.randomUUID());
+    }
+
+    public Token createToken() {
+        return new Token(UUID.randomUUID());
     }
 
 }

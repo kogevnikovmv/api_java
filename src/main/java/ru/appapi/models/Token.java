@@ -2,6 +2,8 @@ package ru.appapi.models;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "tokens")
 public class Token {
@@ -13,9 +15,15 @@ public class Token {
     public Token() {
     }
 
-    public Token(User user, String tokenValue) {
+    public Token(User user, UUID tokenValue) {
         this.user = user;
-        this.tokenValue = tokenValue;
+        this.tokenValue = tokenValue.toString()
+                .replace("-", "");
+    }
+
+    public Token(UUID tokenValue) {
+        this.tokenValue = tokenValue.toString()
+                .replace("-", "");
     }
 
     @Id

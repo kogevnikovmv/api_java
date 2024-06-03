@@ -64,9 +64,10 @@ public class RegController {
     String changePassword (@RequestHeader HashMap<String, String> headers, @RequestBody ChangePasswordRequest request) {
         if (headers.containsKey("Authorization")) {
             String token = headers.get("Authorization").split(" ")[1];
-            if (!userService.changePassword(token, request.getPassword())) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token(?)");} //?
-            else {throw new ResponseStatusException(HttpStatus.OK, "Password changed");}
-        } else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You need to authorize");}
+            String newToken=userService.changePassword(token, request.getPassword());
+            if (newToken==null) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"Invalid token(?)\"}");} //?
+            else {throw new ResponseStatusException(HttpStatus.OK, "{\"auth_token\": \"Bearer "+newToken+"\"}");}
+        } else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"You need to authorize\"}");}
     }
 }

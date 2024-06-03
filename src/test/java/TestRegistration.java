@@ -101,6 +101,7 @@ public class TestRegistration {
         }
         Assertions.assertNotNull(userAuthToken, "При регистрации тестового пользователя " +
                 "токен авторизации не получен." + errorMessage);
+        System.out.println("first start: "+userAuthToken);//delete
     }
 
 
@@ -146,20 +147,25 @@ public class TestRegistration {
     }
 
     @Test
-    @Disabled //не дописан
+
     public void testUserChangePassword() throws IOException {
         String errorMessage="";
+
         var testChangePasswordRequest = new TestChangePasswordRequest(
                 "MyNewPerfectPassword"
         );
 
         HashMap<String, String> jsonMap = sendPOSTRequest(urlChangePassword, testChangePasswordRequest);
 
+        if (jsonMap.containsKey("auth_token")) {
+            userAuthToken=jsonMap.get("auth_token").split(" ")[1];
+        }
         if (jsonMap.containsKey("err-message")) {
             errorMessage="\n"+jsonMap.get("err-message");
         }
-        Assertions.assertNotNull(userAuthToken, "При регистрации тестового пользователя " +
+        Assertions.assertNotNull(userAuthToken, "При смене пароля новый " +
                 "токен авторизации не получен." + errorMessage);
+        System.out.println("change passwrd: "+userAuthToken);//delete
     }
 
     public static void main(String[] args) throws IOException {
