@@ -34,16 +34,17 @@ public class RegController {
                 String token=user.getToken().getTokenValue();
                 return "{\"auth_token\": \"Bearer "+token+"\"}";
             } else {
-                //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{\"err-message\": \"Wrong login or password\"}");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
+                //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{\"err-message\": \"Wrong login or password\"}");
             }
         } else {
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{\"err-message\": \"Wrong login or password\"}");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
+            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{\"err-message\": \"Wrong login or password\"}");
         }
 
     }
 
+    //нужно добавить обработку ошибок
     @PostMapping("/register")
     String register (@RequestBody RegisterRequest request) {
         if (userService.findUserByLogin(request.getLogin())!=null) {
@@ -62,12 +63,19 @@ public class RegController {
 
     @PostMapping("/chng-psswrd")
     String changePassword (@RequestHeader HashMap<String, String> headers, @RequestBody ChangePasswordRequest request) {
-        if (headers.containsKey("Authorization")) {
-            String token = headers.get("Authorization").split(" ")[1];
+        if (headers.containsKey("authorization")) {
+            String token = headers.get("authorization").split(" ")[1];
             String newToken=userService.changePassword(token, request.getPassword());
+
             if (newToken==null) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"Invalid token(?)\"}");} //?
-            else {throw new ResponseStatusException(HttpStatus.OK, "{\"auth_token\": \"Bearer "+newToken+"\"}");}
-        } else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"You need to authorize\"}");}
+                //throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"Invalid token(?)\"}");} //?
+                return "{\"err-message\": \"Invalid token(?)\"}";
+            } else {return "{\"auth_token\": \"Bearer "+newToken+"\"}";
+            }
+
+        } else {
+            //throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"You need to authorize\"}");}
+            return "{\"err-message\": \"You need to authorize\"}";
+        }
     }
 }

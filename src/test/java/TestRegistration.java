@@ -23,7 +23,7 @@ public class TestRegistration {
     private static String urlRegistration ="http://127.0.0.1:8080/user/register";
     private static String urlLogin="http://127.0.0.1:8080/user/login";
     private static String urlHomePage="http://127.0.0.1:8080";
-    private static String urlChangePassword="http://127.0.0.1:8080/chng-psswrd";
+    private static String urlChangePassword="http://127.0.0.1:8080/user/chng-psswrd";
     private static String userAuthToken;
     static TestRegisterRequest testRegisterRequest;
     static TestLoginRequest testLoginRequest;
@@ -45,12 +45,15 @@ public class TestRegistration {
         );
     }
 
-    public static HashMap<String, String> sendPOSTRequest(String url, Request userRequest) throws IOException {
+    public static HashMap<String, String> sendPOSTRequest(String url, Request userRequest, String token) throws IOException {
 
         String json = objectMapper.writeValueAsString(userRequest);
 
         HttpClient httpClient=HttpClientBuilder.create().build();
         HttpPost postRequest= new HttpPost(url);
+        if (token!=null) {
+            postRequest.setHeader("Authorization", "Bearer "+token);
+        }
         StringEntity postBody = new StringEntity(json);
         postRequest.setEntity(postBody);
         postRequest.setHeader("Content-type", "application/json");
@@ -64,11 +67,11 @@ public class TestRegistration {
         return jsonMap;
     }
 
-    public HashMap<String, String> sendGETRequest(String url) throws IOException {
+    public HashMap<String, String> sendGETRequest(String url, String token) throws IOException {
         HttpClient httpClient=HttpClientBuilder.create().build();
         HttpGet getRequest= new HttpGet(url);
-        if (userAuthToken!=null) {
-            getRequest.setHeader("Authorization", "Bearer "+userAuthToken);
+        if (token!=null) {
+            getRequest.setHeader("Authorization", "Bearer "+token);
         }
         HttpResponse response = httpClient.execute(getRequest);
 
@@ -91,7 +94,7 @@ public class TestRegistration {
                 testUser.getHashPassword()
         );
 
-        HashMap<String, String> jsonMap = sendPOSTRequest(urlRegistration, testRegisterRequest);
+        HashMap<String, String> jsonMap = sendPOSTRequest(urlRegistration, testRegisterRequest, null);
 
         if (jsonMap.containsKey("auth_token")) {
             userAuthToken =jsonMap.get("auth_token").split(" ")[1];
@@ -99,13 +102,13 @@ public class TestRegistration {
         if (jsonMap.containsKey("err-message")) {
             errorMessage="\n"+jsonMap.get("err-message");
         }
+
         Assertions.assertNotNull(userAuthToken, "При регистрации тестового пользователя " +
                 "токен авторизации не получен." + errorMessage);
-        System.out.println("first start: "+userAuthToken);//delete
     }
 
-
-    public String loginTestUser() throws IOException {
+    @Test
+    public void testAuthorizationWithLoginPassword() throws IOException {
         String errorMessage="";
         String authToken = null;
         testLoginRequest= new TestLoginRequest(
@@ -113,30 +116,25 @@ public class TestRegistration {
                 testUser.getHashPassword()
         );
 
-        HashMap<String, String> jsonMap = sendPOSTRequest(urlLogin, testLoginRequest);
+        HashMap<String, String> jsonMap = sendPOSTRequest(urlLogin, testLoginRequest, null);
 
         if (jsonMap.containsKey("auth_token")) {
             authToken=jsonMap.get("auth_token").split(" ")[1];
         }
+
         if (jsonMap.containsKey("err-message")) {
             errorMessage="\n"+jsonMap.get("err-message");
         }
-        Assertions.assertNotNull(authToken, "После авторизации токен не получен"+ errorMessage);
-        return authToken;
-    }
-    
-    public void deleteTestUser() {}
 
-    @Test
-    public void testAuthorizationWithLoginPassword() throws IOException {
-        Assertions.assertEquals(userAuthToken, loginTestUser());
+        Assertions.assertNotNull(authToken, "После авторизации токен не получен"+ errorMessage);
+        Assertions.assertEquals(userAuthToken, authToken);
     }
 
     @Test
     public void testAuthorizationWithToken() throws IOException {
         String errorMessage="";
         String response=null;
-        HashMap <String, String> jsonMap=sendGETRequest(urlHomePage);
+        HashMap <String, String> jsonMap=sendGETRequest(urlHomePage, userAuthToken);
         if (jsonMap.containsKey("message")) {
             response=jsonMap.get("message");
         }
@@ -147,26 +145,35 @@ public class TestRegistration {
     }
 
     @Test
-
     public void testUserChangePassword() throws IOException {
         String errorMessage="";
+        String authToken=null;
 
         var testChangePasswordRequest = new TestChangePasswordRequest(
                 "MyNewPerfectPassword"
         );
 
-        HashMap<String, String> jsonMap = sendPOSTRequest(urlChangePassword, testChangePasswordRequest);
+        HashMap<String, String> jsonMap = sendPOSTRequest(urlChangePassword, testChangePasswordRequest, userAuthToken);
 
         if (jsonMap.containsKey("auth_token")) {
-            userAuthToken=jsonMap.get("auth_token").split(" ")[1];
+            authToken=jsonMap.get("auth_token").split(" ")[1];
         }
         if (jsonMap.containsKey("err-message")) {
             errorMessage="\n"+jsonMap.get("err-message");
         }
-        Assertions.assertNotNull(userAuthToken, "При смене пароля новый " +
+
+        //нужно доработвть проверку
+        Assertions.assertNotNull(authToken, "При смене пароля новый " +
                 "токен авторизации не получен." + errorMessage);
-        System.out.println("change passwrd: "+userAuthToken);//delete
+        Assertions.assertNotEquals(userAuthToken, authToken,
+                "Старый токен совпадает с новым." + errorMessage);
+
+        testUser.setHashPassword(testChangePasswordRequest.getPassword());
+        userAuthToken=authToken;
+
     }
+
+    public void deleteTestUser() {}
 
     public static void main(String[] args) throws IOException {
     }

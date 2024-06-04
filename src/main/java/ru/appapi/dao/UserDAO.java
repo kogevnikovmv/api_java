@@ -46,8 +46,8 @@ public class UserDAO {
                 .getResultList();
         transaction.commit();
         session.close();
-
-        return userToken.get(0).getUser(); // =(
+        if (userToken.isEmpty()) {return null;}
+        else { return userToken.get(0).getUser(); }// =(
     }
 
     public List<User> getAllUsers() {
