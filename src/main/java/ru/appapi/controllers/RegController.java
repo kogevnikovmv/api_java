@@ -20,12 +20,6 @@ import static ru.appapi.MyApp.userService;
 @RequestMapping("/user")
 public class RegController {
 
-    private static final String SUCCESS_STATUS = "success";
-    private static final String ERROR_STATUS = "error";
-    private static final int CODE_SUCCESS = 100;
-    private static final int AUTH_FAILURE = 102;
-
-
     @PostMapping("/login")
     public String login (@RequestBody LoginRequest request) {
         User user=userService.findUserByLogin(request.getLogin());
@@ -33,14 +27,8 @@ public class RegController {
             if (userService.validateUserByLogin(user, request.getPassword())) {
                 String token=user.getToken().getTokenValue();
                 return "{\"auth_token\": \"Bearer "+token+"\"}";
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
-                //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{\"err-message\": \"Wrong login or password\"}");
-            }
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "{\"err-message\": \"Wrong login or password\"}");
-        }
+            } else {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");}
+        } else {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");}
 
     }
 
@@ -48,10 +36,10 @@ public class RegController {
     @PostMapping("/register")
     String register (@RequestBody RegisterRequest request) {
         if (userService.findUserByLogin(request.getLogin())!=null) {
-            return "{\"err-message\": \"User with this username already exists\"}";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this username already exists");
         }
         if (userService.findUserByEmail(request.getEmail())!=null) {
-            return "{\"err-message\": \"User with this e-mail already exists\"}";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this email already exists");
         }
         String token=userService.saveUser(new User(
                 request.getLogin(),
@@ -67,15 +55,9 @@ public class RegController {
             String token = headers.get("authorization").split(" ")[1];
             String newToken=userService.changePassword(token, request.getPassword());
 
-            if (newToken==null) {
-                //throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"Invalid token(?)\"}");} //?
-                return "{\"err-message\": \"Invalid token(?)\"}";
-            } else {return "{\"auth_token\": \"Bearer "+newToken+"\"}";
-            }
+            if (newToken==null) {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token(?)");
+            } else {return "{\"auth_token\": \"Bearer "+newToken+"\"}";}
 
-        } else {
-            //throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"You need to authorize\"}");}
-            return "{\"err-message\": \"You need to authorize\"}";
-        }
+        } else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You need to authorize");}
     }
 }

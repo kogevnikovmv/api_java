@@ -99,8 +99,9 @@ public class TestRegistration {
         if (jsonMap.containsKey("auth_token")) {
             userAuthToken =jsonMap.get("auth_token").split(" ")[1];
         }
-        if (jsonMap.containsKey("err-message")) {
-            errorMessage="\n"+jsonMap.get("err-message");
+
+        if (jsonMap.containsKey("message")) {
+            errorMessage="\n"+jsonMap.get("message");
         }
 
         Assertions.assertNotNull(userAuthToken, "При регистрации тестового пользователя " +
@@ -122,26 +123,25 @@ public class TestRegistration {
             authToken=jsonMap.get("auth_token").split(" ")[1];
         }
 
-        if (jsonMap.containsKey("err-message")) {
-            errorMessage="\n"+jsonMap.get("err-message");
+        if (jsonMap.containsKey("message")) {
+            errorMessage="\n"+jsonMap.get("message");
         }
 
-        Assertions.assertNotNull(authToken, "После авторизации токен не получен"+ errorMessage);
+        Assertions.assertNotNull(authToken, "После авторизации токен не получен."+ errorMessage);
         Assertions.assertEquals(userAuthToken, authToken);
     }
 
     @Test
     public void testAuthorizationWithToken() throws IOException {
         String errorMessage="";
-        String response=null;
+
         HashMap <String, String> jsonMap=sendGETRequest(urlHomePage, userAuthToken);
+
         if (jsonMap.containsKey("message")) {
-            response=jsonMap.get("message");
+            errorMessage="\n"+jsonMap.get("message");
         }
-        if (jsonMap.containsKey("err-message")) {
-            errorMessage="\n"+jsonMap.get("err-message");
-        }
-        Assertions.assertEquals("Hello, "+testUser.getLogin()+"!", response, errorMessage);
+
+        Assertions.assertEquals("Hello, "+testUser.getLogin()+"!", errorMessage);
     }
 
     @Test
@@ -158,11 +158,12 @@ public class TestRegistration {
         if (jsonMap.containsKey("auth_token")) {
             authToken=jsonMap.get("auth_token").split(" ")[1];
         }
-        if (jsonMap.containsKey("err-message")) {
-            errorMessage="\n"+jsonMap.get("err-message");
+
+        if (jsonMap.containsKey("message")) {
+            errorMessage="\n"+jsonMap.get("message");
         }
 
-        //нужно доработвть проверку
+
         Assertions.assertNotNull(authToken, "При смене пароля новый " +
                 "токен авторизации не получен." + errorMessage);
         Assertions.assertNotEquals(userAuthToken, authToken,
