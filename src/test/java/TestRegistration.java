@@ -134,14 +134,20 @@ public class TestRegistration {
     @Test
     public void testAuthorizationWithToken() throws IOException {
         String errorMessage="";
+        String message = null;
 
         HashMap <String, String> jsonMap=sendGETRequest(urlHomePage, userAuthToken);
+
+        if (jsonMap.containsKey("msg")) {
+            message=jsonMap.get("msg");
+        }
 
         if (jsonMap.containsKey("message")) {
             errorMessage="\n"+jsonMap.get("message");
         }
 
-        Assertions.assertEquals("Hello, "+testUser.getLogin()+"!", errorMessage);
+
+        Assertions.assertEquals("Hello, "+testUser.getLogin()+"!", message, errorMessage);
     }
 
     @Test
@@ -173,8 +179,10 @@ public class TestRegistration {
         userAuthToken=authToken;
 
     }
+    @BeforeAll
+    public static void deleteTestUser() {
 
-    public void deleteTestUser() {}
+    }
 
     public static void main(String[] args) throws IOException {
     }

@@ -1,7 +1,10 @@
 package ru.appapi.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import org.mindrot.jbcrypt.BCrypt;
+
+import jakarta.validation.constraints.Email;
 
 
 @Entity
@@ -9,8 +12,11 @@ import org.mindrot.jbcrypt.BCrypt;
 public class User {
 
     private int id;
+    @Pattern(regexp="^[a-zA-Z0-9_-]{2,16}$")
     private String login;
+    @Pattern(regexp="")
     private String hashPassword;
+    @Email
     private String email;
 
 

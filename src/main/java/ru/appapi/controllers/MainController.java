@@ -22,9 +22,9 @@ public class MainController {
             String token = headers.get("authorization").split(" ")[1];
             User user=userService.validateUserByToken(token);
             if (user!=null) {
-                return "{\"message\": "+"\"Hello, "+user.getLogin()+"!\"}";
+                return "{\"msg\": "+"\"Hello, "+user.getLogin()+"!\"}";
             }
-            else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"Invalid token(?)\"}");}
-        } else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "{\"err-message\": \"You need to authorize\"}");}
+            else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token(?)");}
+        } else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You need to authorize");}
     }
 }
