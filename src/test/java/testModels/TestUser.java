@@ -1,12 +1,10 @@
 package testModels;
-import ru.appapi.models.Token;
-import ru.appapi.models.User;
 
-public class TestUser extends User {
+public class TestUser{
     private String login;
     private String hashPassword;
     private String email;
-    private Token token;
+    private String token;
 
     public TestUser(String login, String email, String hashPassword) {
         this.login=login;
@@ -14,43 +12,45 @@ public class TestUser extends User {
         this.hashPassword=hashPassword;
     }
 
-    @Override
     public String getLogin() {
         return login;
     }
 
-    @Override
     public void setLogin(String login) {
         this.login = login;
     }
 
-    @Override
     public String getHashPassword() {
         return hashPassword;
     }
 
-    @Override
     public void setHashPassword(String hashPassword) {
         this.hashPassword = hashPassword;
     }
 
-    @Override
     public String getEmail() {
         return email;
     }
 
-    @Override
     public void setEmail(String email) {
         this.email = email;
     }
 
-    @Override
-    public Token getToken() {
+    public String getToken() {
         return token;
     }
 
-    @Override
-    public void setToken(Token token) {
+    public void setToken(String token) {
         this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return "TestUser{" +
+                "login='" + login + '\'' +
+                ", hashPassword='" + hashPassword + '\'' +
+                ", email='" + email + '\'' +
+                ", token='" + token + '\'' +
+                '}';
     }
 }

@@ -3,10 +3,8 @@ package ru.appapi.exceptions;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @RequiredArgsConstructor
-public class ValidationErrorResponse {
-    private final List<Violation> violations;
+public class CustomError {
+    private final String message;
 }

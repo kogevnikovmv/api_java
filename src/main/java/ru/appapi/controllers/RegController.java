@@ -1,12 +1,15 @@
 package ru.appapi.controllers;
 
-import ru.appapi.models.*;
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.appapi.exceptions.AuthException;
 import ru.appapi.models.ChangePasswordRequest;
 import ru.appapi.models.LoginRequest;
 import ru.appapi.models.RegisterRequest;
@@ -16,6 +19,7 @@ import java.util.HashMap;
 
 import static ru.appapi.MyApp.userService;
 
+@Validated
 @RestController
 @RequestMapping("/user")
 public class RegController {
@@ -27,16 +31,19 @@ public class RegController {
             if (userService.validateUserByLogin(user, request.getPassword())) {
                 String token=user.getToken().getTokenValue();
                 return "{\"auth_token\": \"Bearer "+token+"\"}";
-            } else {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");}
+            } else {throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Wrong login or password");}
         } else {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong login or password");}
 
     }
 
     //нужно добавить обработку ошибок
     @PostMapping("/register")
-    String register (@RequestBody RegisterRequest request) {
+    String register (@Valid @RequestBody RegisterRequest request) throws AuthException {
         if (userService.findUserByLogin(request.getLogin())!=null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this username already exists");
+            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this username already exists");
+            throw new AuthException("Custom exception work! User with this username already exists");
         }
         if (userService.findUserByEmail(request.getEmail())!=null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this email already exists");

@@ -13,8 +13,10 @@ public class User {
 
     private int id;
     @Pattern(regexp="^[a-zA-Z0-9_-]{2,16}$")
+    //длина логина от 2 до 16 символов, заглавные и прописные буквы, латаница, разрешены символы "-" "_".
     private String login;
-    @Pattern(regexp="")
+    @Pattern(regexp="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&]).{8,}$")
+    //длина пароля от 8, обязательны числа, спец символы "@$!%*?&", заглавные и прописные буквы, латиница.
     private String hashPassword;
     @Email
     private String email;
